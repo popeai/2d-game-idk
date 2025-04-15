@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fast Platformer</title>
+  <style>
+    canvas {
+      display: block;
+      margin: auto;
+      background: #87cefa; /* Sky blue */
+    }
+    body { margin: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 800;
+    canvas.height = 400;
+
+    const player = { x: 50, y: 300, width: 30, height: 30, dx: 5, dy: 0, jumping: false, speed: 2 };
+    const gravity = 0.5;
+    const ground = canvas.height - player.height;
+    let scrollOffset = 0;
+
+    function drawGround() {
+      ctx.fillStyle = 'green';
+      ctx.fillRect(-scrollOffset, canvas.height - 40, canvas.width * 2, 40);
+    }
+
+    function update() {
+      scrollOffset += player.dx;
+
+      player.dy += gravity;
+      player.y += player.dy;
+
+      if (player.y > ground) {
+        player.y = ground;
+        player.dy = 0;
+        player.jumping = false;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawGround();
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      requestAnimationFrame(update);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !player.jumping) {
+        player.dy = -10;
+        player.jumping = true;
+      }
+      if (e.code === 'ArrowRight') {
+        player.dx = player.speed;
+      }
+      if (e.code === 'ArrowLeft') {
+        player.dx = -player.speed;
+      }
+    });
+
+    update();
+  </script>
+</body>
+</html>
