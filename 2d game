@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fast Platformer</title>
+  <title>Arrow Key Movement</title>
   <style>
     canvas {
       display: block;
@@ -21,30 +21,38 @@
     canvas.width = 800;
     canvas.height = 400;
 
-    const player = { x: 50, y: 300, width: 30, height: 30, dx: 5, dy: 0, jumping: false, speed: 2 };
+    const player = { x: 100, y: 300, width: 30, height: 30, dx: 0, dy: 0, speed: 5, jumping: false };
     const gravity = 0.5;
-    const ground = canvas.height - player.height;
-    let scrollOffset = 0;
+    const ground = canvas.height - 40;
 
-    function drawGround() {
-      ctx.fillStyle = 'green';
-      ctx.fillRect(-scrollOffset, canvas.height - 40, canvas.width * 2, 40);
+    const platforms = [
+      { x: 50, y: ground - 10, width: 200, height: 10 },
+      { x: 300, y: ground - 60, width: 150, height: 10 },
+      { x: 500, y: ground - 20, width: 200, height: 10 }
+    ];
+
+    function drawPlatforms() {
+      ctx.fillStyle = 'brown';
+      platforms.forEach(platform => {
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+      });
     }
 
     function update() {
-      scrollOffset += player.dx;
-
       player.dy += gravity;
       player.y += player.dy;
 
-      if (player.y > ground) {
-        player.y = ground;
+      if (player.y + player.height > ground) {
+        player.y = ground - player.height;
         player.dy = 0;
         player.jumping = false;
       }
 
+      player.x += player.dx;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawGround();
+      drawPlatforms();
+
       ctx.fillStyle = 'blue';
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
@@ -52,19 +60,13 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && !player.jumping) {
-        player.dy = -10;
-        player.jumping = true;
-      }
-      if (e.code === 'ArrowRight') {
-        player.dx = player.speed;
-      }
-      if (e.code === 'ArrowLeft') {
-        player.dx = -player.speed;
-      }
-    });
+      switch (e.code) {
+        case 'ArrowUp':
+          if (!player.jumping) {
+            player.dy = -10;
+            player.jumping = true;
+          }
+          break;
+        case 'ArrowRight':
+          player.dx = player.speed;
 
-    update();
-  </script>
-</body>
-</html>
