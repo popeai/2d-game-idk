@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2D Platformer</title>
+  <title>Fullscreen 2D Platformer</title>
   <style>
     body {
       margin: 0;
@@ -19,13 +19,15 @@
 <script>
   const canvas = document.getElementById('gameCanvas');
   const context = canvas.getContext('2d');
-  canvas.width = 800;
-  canvas.height = 400;
+
+  // Set canvas to fullscreen
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
   // Player properties
   const player = {
     x: 100,
-    y: 300,
+    y: canvas.height - 150,
     width: 50,
     height: 50,
     color: 'blue',
@@ -91,6 +93,10 @@
       player.velocityY = 0;
       player.jumping = false;
     }
+
+    // Keep player within canvas bounds
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
   }
 
   function draw() {
@@ -110,6 +116,14 @@
     draw();
     requestAnimationFrame(gameLoop);
   }
+
+  // Adjust canvas size on window resize
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    platform.y = canvas.height - 100;
+    platform.width = canvas.width;
+  });
 
   gameLoop();
 </script>
